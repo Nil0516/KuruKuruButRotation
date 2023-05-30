@@ -1,17 +1,20 @@
 ﻿namespace KuruKuruButRotation.Repositories
 {
-    public class BoarderCheckRepository
+    /// <summary>
+    /// 檢查是否碰到主螢幕邊境
+    /// </summary>
+    public class CheckBoardSideRepository
     {
         private Point Location;
         private readonly Size ScreenSize;
         private readonly Size ImageSize;
 
-        public BoarderCheckRepository(Point location, Size screenSize, Size imageSize)
+        public CheckBoardSideRepository(Point location, Size screenSize, Size imageSize)
         {
             Location = location;
             ScreenSize = screenSize;
             ImageSize = imageSize;
-    }
+        }
 
         /// <summary>
         /// 檢查圖片是否碰到邊境 (右側)
@@ -61,6 +64,10 @@
             return false;
         }
 
+        /// <summary>
+        /// 更新當前位置
+        /// </summary>
+        /// <param name="location"></param>
         public void UpdateLocation(Point location)
         {
             Location = location;

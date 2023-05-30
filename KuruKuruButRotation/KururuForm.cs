@@ -1,6 +1,5 @@
 using KuruKuruButRotation.Repositories;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using KuruKuruButRotation.Repositories.Model;
 
 namespace KuruKuruButRotation
 {
@@ -9,16 +8,16 @@ namespace KuruKuruButRotation
         private readonly Size ScreenSize;
         private readonly MoveRepository MoveRepository;
         private readonly AudioRepository AudioRepository;
-        private readonly BoarderCheckRepository BoarderCheckRepository;
+        private readonly CheckBoardSideRepository CheckBoardSideRepository;
 
         public KururuForm()
         {
             InitializeComponent();
             ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            MoveRepository = new MoveRepository();
-            BoarderCheckRepository = new BoarderCheckRepository(Location, ScreenSize, mainImage.Size);
             // TODO: Refactor. Please useing the appsettings.json to set audio path.
             AudioRepository = new AudioRepository(new List<string> { "./Audios/Kurukuru.wav", "./Audios/Kurulin.wav" });
+            MoveRepository = new MoveRepository(new MoveSize { Min = 1, Max = 50 }, new MoveSize { Min = 1, Max = 50 });
+            CheckBoardSideRepository = new CheckBoardSideRepository(Location, ScreenSize, mainImage.Size);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -35,7 +34,7 @@ namespace KuruKuruButRotation
             // TODO: Refactor this dirty code.
             while (true)
             {
-                if (BoarderCheckRepository.IsTopBorderEdge())
+                if (CheckBoardSideRepository.IsTopBorderEdge())
                 {
                     if (YesOrNo())
                     {
@@ -45,7 +44,7 @@ namespace KuruKuruButRotation
                     {
                         (moveX, moveY) = MoveRepository.MoveLeftBottom();
                     }
-                } else if (BoarderCheckRepository.IsBottomBorderEdge())
+                } else if (CheckBoardSideRepository.IsBottomBorderEdge())
                 {
                     if (YesOrNo())
                     {
@@ -54,7 +53,7 @@ namespace KuruKuruButRotation
                     {
                         (moveX, moveY) = MoveRepository.MoveLeftTop();
                     }
-                } else if (BoarderCheckRepository.IsLeftBorderEdge())
+                } else if (CheckBoardSideRepository.IsLeftBorderEdge())
                 {
                     if (YesOrNo())
                     {
@@ -63,7 +62,7 @@ namespace KuruKuruButRotation
                     {
                         (moveX, moveY) = MoveRepository.MoveRightTop();
                     }
-                } else if (BoarderCheckRepository.IsRightBorderEdge())
+                } else if (CheckBoardSideRepository.IsRightBorderEdge())
                 {
                     if (YesOrNo())
                     {
@@ -75,7 +74,7 @@ namespace KuruKuruButRotation
                     }
                 }
                 await MoveForm(10, moveX, moveY);
-                BoarderCheckRepository.UpdateLocation(Location);
+                CheckBoardSideRepository.UpdateLocation(Location);
             }
         }
 
