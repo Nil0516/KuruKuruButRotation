@@ -1,47 +1,68 @@
-using KuruKuruButRotation.Repositories;
+ï»¿using KuruKuruButRotation.Repositories;
 using KuruKuruButRotation.Repositories.Model;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace KuruKuruButRotation
 {
-    public partial class KururuForm : Form
+    public partial class KuruKuruForm : Form
     {
+        private readonly AppsettingsConfig AppsettingsConfig;
+
         private readonly Size ScreenSize;
         private readonly MoveRepository MoveRepository;
         private readonly AudioRepository AudioRepository;
         private readonly CheckBoardSideRepository CheckBoardSideRepository;
 
-        public KururuForm()
+        public KuruKuruForm(AppsettingsConfig appsettingsConfig)
         {
             InitializeComponent();
+            AppsettingsConfig = appsettingsConfig;
+            
+            // init repository
             ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            // TODO: Refactor. Please useing the appsettings.json to set audio path.
-            AudioRepository = new AudioRepository(new List<string> { "./Audios/Kurukuru.wav", "./Audios/Kurulin.wav" });
+            AudioRepository = new AudioRepository(AppsettingsConfig.Audios);
             MoveRepository = new MoveRepository(new MoveSize { Min = 1, Max = 50 }, new MoveSize { Min = 1, Max = 50 });
             CheckBoardSideRepository = new CheckBoardSideRepository(Location, ScreenSize, mainImage.Size);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void KuruKuruForm_Load(object sender, EventArgs e)
         {
             InitializeTheme();
             DvdStyleMove();
         }
 
+        /// <summary>
+        /// æ¨¡æ“¬ DVD é¢¨æ ¼çš„ç§»å‹•
+        /// </summary>
+        /// <returns></returns>
         private async Task DvdStyleMove()
         {
             Point point = new Point(Random.Shared.Next(-50, 50), Random.Shared.Next(-50, 50));
-            
+
             while (true)
             {
                 if (CheckBoardSideRepository.IsTopBorderEdge())
                 {
                     point = MoveRepository.MoveRightOrLeftBottom();
-                } else if (CheckBoardSideRepository.IsBottomBorderEdge())
+                }
+                else if (CheckBoardSideRepository.IsBottomBorderEdge())
                 {
                     point = MoveRepository.MoveRightOrLeftTop();
-                } else if (CheckBoardSideRepository.IsLeftBorderEdge())
+                }
+                else if (CheckBoardSideRepository.IsLeftBorderEdge())
                 {
                     point = MoveRepository.MoveRightRopOrBottom();
-                } else if (CheckBoardSideRepository.IsRightBorderEdge())
+                }
+                else if (CheckBoardSideRepository.IsRightBorderEdge())
                 {
                     point = MoveRepository.MoveLeftTopOrBottom();
                 }
@@ -50,8 +71,9 @@ namespace KuruKuruButRotation
             }
         }
 
-        
-
+        /// <summary>
+        /// ç§»å‹•è¦–çª—
+        /// </summary>
         private async Task MoveForm(int delay, int x = 0, int y = 0)
         {
             this.Invoke((MethodInvoker)delegate {
@@ -61,20 +83,22 @@ namespace KuruKuruButRotation
         }
 
         /// <summary>
-        /// ªì©l¤¶­±¡AÅı Kururu.gif ªº¼v¹³¤j¤p¬°µøµ¡¤j¤p»P­I´º³z©ú
+        /// åˆå§‹ä»‹é¢ï¼Œè®“ Kururu.gif çš„å½±åƒå¤§å°ç‚ºè¦–çª—å¤§å°èˆ‡èƒŒæ™¯é€æ˜
         /// </summary>
         private void InitializeTheme()
         {
-            // ­I´º³z©ú
+            // èƒŒæ™¯é€æ˜
             this.TransparencyKey = Color.Red;
             this.BackColor = Color.Red;
 
-            // ³]©wªí³æªº¤j¤p¬°­I´º¹Ï¤ùªº¤j¤p
+            // è¨­å®šè¡¨å–®çš„å¤§å°ç‚ºèƒŒæ™¯åœ–ç‰‡çš„å¤§å°
             this.ClientSize = mainImage.Size;
 
-            // ³]©wªí³æªº¼Ë¦¡
+            // è¨­å®šè¡¨å–®çš„æ¨£å¼
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            this.TopMost = true;
         }
 
         private void mainImage_Click(object sender, EventArgs e)
