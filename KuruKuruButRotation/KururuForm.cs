@@ -28,65 +28,29 @@ namespace KuruKuruButRotation
 
         private async Task DvdStyleMove()
         {
-            int moveX = Random.Shared.Next(0, 50);
-            int moveY = Random.Shared.Next(0, 50);
-
-            // TODO: Refactor this dirty code.
+            Point point = new Point(Random.Shared.Next(-50, 50), Random.Shared.Next(-50, 50));
+            
             while (true)
             {
                 if (CheckBoardSideRepository.IsTopBorderEdge())
                 {
-                    if (YesOrNo())
-                    {
-                        (moveX, moveY) = MoveRepository.MoveRightBottom();
-                    }
-                    else
-                    {
-                        (moveX, moveY) = MoveRepository.MoveLeftBottom();
-                    }
+                    point = MoveRepository.MoveRightOrLeftBottom();
                 } else if (CheckBoardSideRepository.IsBottomBorderEdge())
                 {
-                    if (YesOrNo())
-                    {
-                        (moveX, moveY) = MoveRepository.MoveRightTop();
-                    } else
-                    {
-                        (moveX, moveY) = MoveRepository.MoveLeftTop();
-                    }
+                    point = MoveRepository.MoveRightOrLeftTop();
                 } else if (CheckBoardSideRepository.IsLeftBorderEdge())
                 {
-                    if (YesOrNo())
-                    {
-                        (moveX, moveY) = MoveRepository.MoveRightBottom();
-                    } else
-                    {
-                        (moveX, moveY) = MoveRepository.MoveRightTop();
-                    }
+                    point = MoveRepository.MoveRightRopOrBottom();
                 } else if (CheckBoardSideRepository.IsRightBorderEdge())
                 {
-                    if (YesOrNo())
-                    {
-                        (moveX, moveY) = MoveRepository.MoveLeftBottom();
-                    }
-                    else
-                    {
-                        (moveX, moveY) = MoveRepository.MoveLeftTop();
-                    }
+                    point = MoveRepository.MoveLeftTopOrBottom();
                 }
-                await MoveForm(10, moveX, moveY);
+                await MoveForm(10, point.X, point.Y);
                 CheckBoardSideRepository.UpdateLocation(Location);
             }
         }
 
-        private bool YesOrNo()
-        {
-            int luckyNumber = Random.Shared.Next(0, 100);
-            if (luckyNumber < 50)
-            {
-                return true;
-            }
-            return false;
-        }
+        
 
         private async Task MoveForm(int delay, int x = 0, int y = 0)
         {
